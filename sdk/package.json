@@ -1,0 +1,41 @@
+{
+  "name": "@realtimeplatform/sdk",
+  "version": "1.0.0",
+  "description": "Reusable TypeScript client SDK for the real-time communication platform",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint src --ext .ts"
+  },
+  "dependencies": {
+    "socket.io-client": "^4.7.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.5",
+    "typescript": "^5.3.3",
+    "eslint": "^8.56.0",
+    "@typescript-eslint/parser": "^6.19.0",
+    "@typescript-eslint/eslint-plugin": "^6.19.0"
+  },
+  "peerDependencies": {
+    "socket.io-client": "^4.7.4"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "keywords": [
+    "socket.io",
+    "real-time",
+    "chat",
+    "webrtc",
+    "audio-calls",
+    "sdk"
+  ],
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
