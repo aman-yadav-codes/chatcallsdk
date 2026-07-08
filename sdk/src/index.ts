@@ -49,25 +49,15 @@ export class CommunicationSDK {
   constructor(config: SDKConfig) {
     this.manager = new SocketManager(config);
 
-    // Use a lazy socket proxy so modules can bind events before connect() is called.
-    // Events emitted before connection are queued by socket.io-client internally.
-    const getSocket = () => this.manager.getSocket();
+    const socket = this.manager.getSocket();
 
-    const lazySocket = new Proxy({} as ReturnType<SocketManager['getSocket']>, {
-      get: (_target, prop) => {
-        const s = getSocket();
-        const val = (s as unknown as Record<string | symbol, unknown>)[prop];
-        return typeof val === 'function' ? val.bind(s) : val;
-      },
-    });
-
-    this.chat = new ChatModule(lazySocket);
-    this.presence = new PresenceModule(lazySocket);
-    this.rooms = new RoomModule(lazySocket);
-    this.typing = new TypingModule(lazySocket);
-    this.notifications = new NotificationModule(lazySocket);
-    this.calls = new CallModule(lazySocket, this.manager);
-    this.webrtc = new WebRTCModule(lazySocket, this.manager);
+    this.chat = new ChatModule(socket);
+    this.presence = new PresenceModule(socket);
+    this.rooms = new RoomModule(socket);
+    this.typing = new TypingModule(socket);
+    this.notifications = new NotificationModule(socket);
+    this.calls = new CallModule(socket, this.manager);
+    this.webrtc = new WebRTCModule(socket, this.manager);
   }
 
   // ─── Connection ────────────────────────────────────────────────────────────
