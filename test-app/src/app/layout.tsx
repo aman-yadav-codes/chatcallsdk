@@ -5,14 +5,16 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'SDK Test Console | Real-Time Platform',
-  description: 'Test console for the real-time communication SDK',
+  title: 'RTC SDK Live Production Console',
+  description: 'Test console for the real-time communication platform SDK and Server',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <body className={inter.className}>{children}</body>
+    <html lang="en" className="dark">
+      <body className={`${inter.className} bg-gray-950 text-gray-100 antialiased`}>
+        {children}
+      </body>
     </html>
   );
 }
