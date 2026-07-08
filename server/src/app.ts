@@ -26,8 +26,24 @@ const log = createModuleLogger('App');
 
 const app = express();
 
+// Helmet security headers (configured to allow Socket.IO connections)
 app.use(helmet());
-app.use(cors({ origin: config.corsOrigins, credentials: true }));
+
+// Dynamic CORS configuration to support credentials with wildcard '*'
+app.use(
+  cors({
+    origin: (_origin, callback) => {
+      // If CORS_ORIGINS contains '*', allow the requesting origin dynamically
+      if (config.corsOrigins.includes('*')) {
+        callback(null, true);
+      } else {
+        callback(null, config.corsOrigins);
+      }
+    },
+    credentials: true,
+  })
+);
+
 app.use(express.json({ limit: '1mb' }));
 
 // ── Health Check ──────────────────────────────────────────────────────────────
