@@ -31,7 +31,7 @@ export class ChatModule extends TypedEventEmitter<ChatEvents> {
   private bindServerEvents(): void {
     this.socket.on('chat:new', (msg: Message) => this.emit('new', msg));
     this.socket.on('chat:edited', (msg: Message) => this.emit('edited', msg));
-    this.socket.on('chat:deleted', (payload: ChatEvents['deleted']) => this.emit('deleted', payload));
+    this.socket.on('chat:deleted', (payload) => this.emit('deleted', payload));
     this.socket.on('chat:delivered', (payload: DeliveryPayload) => this.emit('delivered', payload));
     this.socket.on('chat:read', (payload: DeliveryPayload) => this.emit('read', payload));
   }

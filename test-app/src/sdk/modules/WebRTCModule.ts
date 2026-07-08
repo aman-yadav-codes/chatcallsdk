@@ -17,6 +17,7 @@ interface WebRTCEvents {
 
 export class WebRTCModule extends TypedEventEmitter<WebRTCEvents> {
   private peerConnections = new Map<string, RTCPeerConnection>();
+  private activeAudioElements = new Map<string, HTMLAudioElement>();
   private localStream: MediaStream | null = null;
   private statsInterval: ReturnType<typeof setInterval> | null = null;
   private webrtcConfig: WebRTCConfig = {};
@@ -65,6 +66,33 @@ export class WebRTCModule extends TypedEventEmitter<WebRTCEvents> {
     for (const track of this.localStream.getTracks()) {
       pc.addTrack(track, this.localStream);
     }
+
+    // Play remote audio track when received
+    pc.ontrack = (event) => {
+      const remoteStream = event.streams[0];
+      if (remoteStream) {
+        // Clear any prior audio element for this call session
+        const oldAudio = this.activeAudioElements.get(callId);
+        if (oldAudio) {
+          oldAudio.pause();
+          oldAudio.srcObject = null;
+        }
+
+        const audio = new Audio();
+        audio.srcObject = remoteStream;
+        audio.autoplay = true;
+        this.activeAudioElements.set(callId, audio);
+
+        audio.play().catch(() => {
+          // Autoplay fallback logic
+          const playOnInteraction = () => {
+            audio.play().catch(() => {});
+            document.removeEventListener('click', playOnInteraction);
+          };
+          document.addEventListener('click', playOnInteraction);
+        });
+      }
+    };
 
     // ICE candidate handler — relay via server
     pc.onicecandidate = ({ candidate }) => {
@@ -192,6 +220,14 @@ export class WebRTCModule extends TypedEventEmitter<WebRTCEvents> {
       this.peerConnections.delete(callId);
     }
     this.targetUserIds.delete(callId);
+
+    // Clean up active audio element for this call
+    const audio = this.activeAudioElements.get(callId);
+    if (audio) {
+      audio.pause();
+      audio.srcObject = null;
+      this.activeAudioElements.delete(callId);
+    }
 
     if (this.peerConnections.size === 0) {
       this.stopQualityMonitor();

@@ -18,9 +18,9 @@ export class RoomModule extends TypedEventEmitter<RoomEvents> {
 
   private bindServerEvents(): void {
     this.socket.on('room:created', (room: Room) => this.emit('created', room));
-    this.socket.on('room:joined', (payload: RoomEvents['joined']) => this.emit('joined', payload));
-    this.socket.on('room:left', (payload: RoomEvents['left']) => this.emit('left', payload));
-    this.socket.on('room:members:update', (payload: RoomEvents['membersUpdated']) => this.emit('membersUpdated', payload));
+    this.socket.on('room:joined', (payload) => this.emit('joined', payload));
+    this.socket.on('room:left', (payload) => this.emit('left', payload));
+    this.socket.on('room:members:update', (payload) => this.emit('membersUpdated', payload));
   }
 
   async create(payload: CreateRoomPayload): Promise<AckResponse<Room>> {
